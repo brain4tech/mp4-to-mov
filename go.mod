@@ -1,4 +1,4 @@
-module github.com/Brain4Tech/mp4-2-mov
+module github.com/Brain4Tech/mp4-to-mov
 
 go 1.17
 

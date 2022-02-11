@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Brain4Tech <brain4techyt@gmail.com>
 
 */
 package cmd
@@ -13,13 +13,8 @@ import (
 // mp4Cmd represents the mp4 command
 var mp4Cmd = &cobra.Command{
 	Use:   "mp4",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Select all .mp4-files and convert them into .mov",
+	Long:  `Select all .mp4-files and convert them into .mov`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("mp4 called")
 	},

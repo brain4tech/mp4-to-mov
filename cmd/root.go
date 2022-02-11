@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 Brain4Tech <brain4techyt@gmail.com>
 
 */
 package cmd
@@ -10,18 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "mp4-2-mov",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:   "mp4-to-mov",
+	Short: "A CLI to quickly convert .mp4 to .mov-files and vice-versa",
+	Long: `mp4-to-mov is a CLI specifically designed for Davinci Resolve users on Linux,
+as it is not possible to use mp4-encoded files with an acc-audio codec.
+This tool is meant to quickly convert .mp4-files to a usable .mov-fileformat
+with pcm_s16le audio-encoding.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+The same process can be made in reverse, so rendered projects can be shared
+in an .mp4-format. Converting files can be done recursivly in
+subdirectories or just the given directory.
+Converted files can be replaced or stored in a new subdirectory.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -47,5 +48,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
