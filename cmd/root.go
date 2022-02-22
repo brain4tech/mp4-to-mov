@@ -46,5 +46,12 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolP("iterative", "i", false, "Whether the tool should only convert files in current directory instead of converting files recursivly")
+	rootCmd.PersistentFlags().BoolP("both", "b", false, `Put both original and converted files in same directory.
+Cannot be used together with --k and --r.`)
+	rootCmd.PersistentFlags().BoolP("keep", "k", false, `Keep original files and put converted files in subdirectories.
+Cannot be used together with --b and --r.`)
+	rootCmd.PersistentFlags().BoolP("replace", "r", true, `Replace converted files with original files and backup original files in subdirectories.
+Cannot be used together with --k and --b.`)
 }
