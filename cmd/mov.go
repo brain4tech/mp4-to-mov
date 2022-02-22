@@ -16,10 +16,16 @@ var movCmd = &cobra.Command{
 	Short: "Select all .mov-files and convert them into .mp4",
 	Long:  `Select all .mov-files and convert them into .mp4`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("mov called")
+		fmt.Println("mov called", args)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(movCmd)
+}
+
+func ConvertMovFileToMp4(path string, filename string, originType string, targetType string) bool {
+	// convert mov-file to mp4
+
+	return true
 }

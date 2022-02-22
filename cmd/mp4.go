@@ -23,3 +23,9 @@ var mp4Cmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(mp4Cmd)
 }
+
+func ConvertMp4FileToMov(path string, filename string, originType string, targetType string) bool {
+	// convert mp4-file to mov
+
+	return true
+}
