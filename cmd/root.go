@@ -23,13 +23,8 @@ The same process can be made in reverse, so rendered projects can be shared
 in an .mp4-format. Converting files can be done recursivly in
 subdirectories or just the given directory.
 Converted files can be replaced or stored in a new subdirectory.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -38,15 +33,6 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.mp4-2-mov.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().BoolP("iterative", "i", false, "Whether the tool should only convert files in current directory instead of converting files recursivly")
 	rootCmd.PersistentFlags().BoolP("both", "b", false, `Put both original and converted files in same directory.
 Cannot be used together with --k and --r.`)
