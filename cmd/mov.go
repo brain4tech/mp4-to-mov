@@ -15,8 +15,13 @@ var movCmd = &cobra.Command{
 	Use:   "mov",
 	Short: "Select all .mov-files and convert them into .mp4",
 	Long:  `Select all .mov-files and convert them into .mp4`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("mov called", args)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		// fmt.Println("mov called", args)
+		fmt.Printf("-i: %v, -b: %v, -o: %v, -r: %v\n", flagSearchIterative, flagKeepBoth, flagKeepOld, flagReplaceOld)
+		searchMethod := DetermineSearchMethod()
+		replaceMethod, err := DetermineFileHandling()
+		fmt.Printf("mov called with following flags:\n\tsearchmethod:\t%v\n\treplacemethod:\t%v\n\terror:\t%v\n", searchMethod, replaceMethod, err)
+		return err
 	},
 }
 
