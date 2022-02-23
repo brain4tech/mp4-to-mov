@@ -30,19 +30,16 @@ var mp4Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		log.Println("Using", searchRootPath, "as root path for search")
+		log.Println("Searching root path:", searchRootPath)
 
-		fileArray, err := SearchFiles(searchMethod, "mp4")
-		if err != nil {
-			return err
-		}
-		log.Println("Found", len(fileArray), "files")
+		fileArray := SearchFiles(searchMethod, "mp4")
+		log.Println(len(fileArray), "files found")
 
 		for _, file := range fileArray {
 			success := ConvertMp4FileToMov(file, replaceMethod)
 			if !success {
-				message := "Error while trying to convert " + file.parentPath + file.Name + "." + file.Type
-				log.Fatal(message)
+				message := "\tError while trying to convert " + file.parentPath + file.Name + "." + file.Type
+				log.Println(message)
 			}
 		}
 		return err
@@ -55,23 +52,35 @@ func init() {
 
 func ConvertMp4FileToMov(file File, replaceMethod int) bool {
 	// convert mp4-file to mov
-	conversion, err := exec.Command("ffmpeg", "-i", file.parentPath+"/"+file.Name+file.Type, "-acodec", "pcm_s16le", "-vcodec", "copy", file.parentPath+"/"+file.Name+".mov").Output()
-	log.Println("conversion", conversion, err)
+	log.Println("Converting", file.parentPath+"/"+file.Name+file.Type)
+	_, err := exec.Command("ffmpeg", "-i", file.parentPath+"/"+file.Name+file.Type, "-acodec", "pcm_s16le", "-vcodec", "copy", file.parentPath+"/"+file.Name+".mov").Output()
+	if err != nil {
+		return false
+	}
 
 	if replaceMethod == 1 {
-		newPath := "mkdir " + file.parentPath + "/old"
 		_, errPathCreation := exec.Command("mkdir", file.parentPath+"/old").Output()
-		log.Println("creating path:", newPath, errPathCreation)
+		if errPathCreation != nil {
+			log.Println("\tError while creating path", file.parentPath+"/old")
+		} else {
+			_, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+file.Type, file.parentPath+"/old/"+file.Name+file.Type).Output()
+			if errFileMove != nil {
+				log.Println("\tError while moving", file.parentPath+file.Name+file.Type, "to", file.parentPath+"/old/"+file.Name+file.Type)
+			}
 
-		fileMove, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+file.Type, file.parentPath+"/old/"+file.Name+file.Type).Output()
-		log.Println("moving old file:", fileMove, errFileMove)
+		}
 
 	} else if replaceMethod == 3 {
 		_, errNewPath := exec.Command("mkdir", file.parentPath+"/converted").Output()
-		log.Println("creating path:", errNewPath)
+		if errNewPath != nil {
+			log.Println("\tError while creating path", file.parentPath+"/converted")
+		} else {
+			_, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+".mov", file.parentPath+"/converted/"+file.Name+".mov").Output()
+			if errFileMove != nil {
+				log.Println("\tError while moving", file.parentPath+file.Name+".mov", "to", file.parentPath+"/converted/"+file.Name+".mov")
+			}
+		}
 
-		_, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+".mov", file.parentPath+"/converted/"+file.Name+".mov").Output()
-		log.Println("moving converted file:", errFileMove)
 	}
 
 	return true

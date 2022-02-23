@@ -16,12 +16,18 @@ import (
 )
 
 var (
-	flagSearchIterative    bool
-	flagKeepBoth           bool
-	flagKeepOld            bool
-	flagReplaceOld         bool
-	flagCapitalizeFileType bool
+	flagSearchIterative   bool
+	flagKeepBoth          bool
+	flagKeepOld           bool
+	flagReplaceOld        bool
+	flagUppercaseFileType bool
 )
+
+type File struct {
+	parentPath string
+	Name       string
+	Type       string
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -54,14 +60,8 @@ Cannot be used together with --b and --r.`)
 	rootCmd.PersistentFlags().BoolVarP(&flagReplaceOld, "replace-old", "r", false, `Replace converted files with original files and backup original files in subdirectories (default).
 Cannot be used together with --o and --b.`)
 
-	rootCmd.PersistentFlags().BoolVarP(&flagCapitalizeFileType, "uppercase", "u", false, `Whether to search for uppercased file types instead of regular ones (eg. '.MP4' instead of '.mp4'`)
+	rootCmd.PersistentFlags().BoolVarP(&flagUppercaseFileType, "uppercase", "u", false, `Whether to search for uppercased file types instead of regular ones (eg. '.MP4' instead of '.mp4'`)
 
-}
-
-type File struct {
-	parentPath string
-	Name       string
-	Type       string
 }
 
 func DetermineSearchMethod() int {
@@ -112,21 +112,21 @@ func DetermineFileHandling() (int, error) {
 
 func DetermineSearchRootPath(args []string) (string, error) {
 	if len(args) != 0 {
-		// Abs converts any given (absolute) path into a relative one
+		// filepath.Abs converts any given (absolute) path into a relative one
 		return filepath.Abs(args[0])
 	}
 	return os.Getwd()
 }
 
-func SearchFiles(method int, filetype string) ([]File, error) {
+func SearchFiles(method int, filetype string) []File {
 
 	fileArray := make([]File, 0)
 	var globMethodString string
 	localFileType := filetype
-	if flagCapitalizeFileType {
+
+	if flagUppercaseFileType {
 		localFileType = strings.ToUpper(filetype)
 	}
-
 	log.Println("Searching for all files ending on ." + localFileType)
 
 	if method > 0 {
@@ -137,7 +137,7 @@ func SearchFiles(method int, filetype string) ([]File, error) {
 	globMethodString = "*." + localFileType
 	SearchAndConvert(&fileArray, globMethodString)
 
-	return fileArray, nil
+	return fileArray
 }
 
 func SearchAndConvert(array *[]File, method string) {
@@ -155,8 +155,7 @@ func SearchAndConvert(array *[]File, method string) {
 }
 
 func ConvertFilepathToFile(path string) File {
-
-	log.Println("Doing path conversion for", path)
+	// log.Println("Doing path conversion for", path)
 
 	fullPath, _ := filepath.Abs(path)
 	parentPath := filepath.Dir(fullPath)
