@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/mattn/go-zglob"
 	"github.com/spf13/cobra"
 )
 
@@ -61,7 +62,6 @@ type File struct {
 	parentPath string
 	Name       string
 	Type       string
-	ContraType string
 }
 
 func DetermineSearchMethod() int {
@@ -129,40 +129,40 @@ func SearchFiles(method int, filetype string) ([]File, error) {
 
 	log.Println("Searching for all files ending on ." + localFileType)
 
-	if method < 0 {
-		globMethodString = "*." + localFileType
-
-	} else {
-		globMethodString = string(os.PathSeparator) + "**" + string(os.PathSeparator) + "*." + localFileType
-	}
-	foundFiles, err := filepath.Glob(globMethodString)
-
-	if err != nil {
-		return make([]File, 0), err
+	if method > 0 {
+		globMethodString = "**" + string(os.PathSeparator) + "*." + localFileType
+		SearchAndConvert(&fileArray, globMethodString)
 	}
 
-	for _, filepath := range foundFiles {
-		file, err := ConvertFilepathToFile(filepath)
-		if err == nil {
-			fileArray = append(fileArray, file)
-		}
-	}
+	globMethodString = "*." + localFileType
+	SearchAndConvert(&fileArray, globMethodString)
 
 	return fileArray, nil
 }
 
-func ConvertFilepathToFile(path string) (File, error) {
-	// searching files retrieves a path
-	// exclude data from this path and store them in a struct for easier file conversion
+func SearchAndConvert(array *[]File, method string) {
+	log.Println("Searching with pattern", method)
 
-	/*
-		1. split path at '/'
-		2. take last element (filename) and split at '.'
-		3. recombine splittedpath from root to parent directory of file
-		4. store everything in new File struct
+	foundFiles, err := zglob.Glob(method)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	for _, filepath := range foundFiles {
+		*array = append(*array, ConvertFilepathToFile(filepath))
+	}
 
-		* look into filepath documentation for some cool functions to use for above structure
-	*/
+}
 
-	return File{}, nil
+func ConvertFilepathToFile(path string) File {
+
+	log.Println("Doing path conversion for", path)
+
+	fullPath, _ := filepath.Abs(path)
+	parentPath := filepath.Dir(fullPath)
+	file := filepath.Base(path)
+	fileType := filepath.Ext(file)
+	fileName := strings.TrimSuffix(file, fileType)
+
+	return File{parentPath, fileName, fileType}
 }
