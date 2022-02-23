@@ -33,15 +33,7 @@ type File struct {
 var rootCmd = &cobra.Command{
 	Use:   "mp4-to-mov",
 	Short: "A CLI to quickly convert .mp4 to .mov-files and vice-versa",
-	Long: `mp4-to-mov is a CLI specifically designed for Davinci Resolve users on Linux,
-as it is not possible to use mp4-encoded files with an acc-audio codec.
-This tool is meant to quickly convert .mp4-files to a usable .mov-fileformat
-with pcm_s16le audio-encoding.
-
-The same process can be made in reverse, so rendered projects can be shared
-in an .mp4-format. Converting files can be done recursivly in
-subdirectories or just the given directory.
-Converted files can be replaced or stored in a new subdirectory.`,
+	Long:  `mp4-to-mov is a small handy CLI to (recursively) convert .mp4-files in a given directory into a .mov-file, and vice-versa.`,
 }
 
 func Execute() {
@@ -52,7 +44,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&flagSearchIterative, "iterative", "i", false, "Whether the tool should only convert files in current directory instead of converting files recursivly")
+	rootCmd.PersistentFlags().BoolVarP(&flagSearchIterative, "iterative", "i", false, "Whether the tool should only convert files in current directory instead of converting files recursively")
 	rootCmd.PersistentFlags().BoolVarP(&flagKeepBoth, "keep-both", "b", false, `Put both original and converted files in same directory.
 Cannot be used together with --o and --r.`)
 	rootCmd.PersistentFlags().BoolVarP(&flagKeepOld, "keep-old", "o", false, `Keep original files and put converted files in subdirectories.
@@ -60,12 +52,12 @@ Cannot be used together with --b and --r.`)
 	rootCmd.PersistentFlags().BoolVarP(&flagReplaceOld, "replace-old", "r", false, `Replace converted files with original files and backup original files in subdirectories (default).
 Cannot be used together with --o and --b.`)
 
-	rootCmd.PersistentFlags().BoolVarP(&flagUppercaseFileType, "uppercase", "u", false, `Whether to search for uppercased file types instead of regular ones (eg. '.MP4' instead of '.mp4'`)
+	rootCmd.PersistentFlags().BoolVarP(&flagUppercaseFileType, "uppercase", "u", false, `Whether to search for uppercased file types instead of regular ones (eg. '.MP4' instead of '.mp4')`)
 
 }
 
 func DetermineSearchMethod() int {
-	// check flag variables to determine whether to search files recursivly or just the directory
+	// check flag variables to determine whether to search files recursively or just the directory
 	// returns 1 (recursive, as it is default) or -1 (given directory)
 	if flagSearchIterative {
 		return -1
