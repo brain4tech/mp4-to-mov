@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"log"
+	"os/exec"
 
 	"github.com/spf13/cobra"
 )
@@ -35,6 +36,7 @@ var mp4Cmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		log.Println("Found", len(fileArray), "files")
 
 		for _, file := range fileArray {
 			success := ConvertMp4FileToMov(file, replaceMethod)
@@ -53,16 +55,23 @@ func init() {
 
 func ConvertMp4FileToMov(file File, replaceMethod int) bool {
 	// convert mp4-file to mov
+	conversion, err := exec.Command("ffmpeg", "-i", file.parentPath+"/"+file.Name+file.Type, "-acodec", "pcm_s16le", "-vcodec", "copy", file.parentPath+"/"+file.Name+".mov").Output()
+	log.Println("conversion", conversion, err)
 
 	if replaceMethod == 1 {
-		// create subdirectory 'old'
-		// convert file
-		// move old file to 'old'
-	} else if replaceMethod == 2 {
-		// convert files
-	} else {
-		// create subdirectory 'converted'
-		// directly convert file into 'converted'
+		newPath := "mkdir " + file.parentPath + "/old"
+		_, errPathCreation := exec.Command("mkdir", file.parentPath+"/old").Output()
+		log.Println("creating path:", newPath, errPathCreation)
+
+		fileMove, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+file.Type, file.parentPath+"/old/"+file.Name+file.Type).Output()
+		log.Println("moving old file:", fileMove, errFileMove)
+
+	} else if replaceMethod == 3 {
+		_, errNewPath := exec.Command("mkdir", file.parentPath+"/converted").Output()
+		log.Println("creating path:", errNewPath)
+
+		_, errFileMove := exec.Command("mv", file.parentPath+"/"+file.Name+".mov", file.parentPath+"/converted/"+file.Name+".mov").Output()
+		log.Println("moving converted file:", errFileMove)
 	}
 
 	return true
