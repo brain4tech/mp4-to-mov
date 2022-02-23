@@ -38,7 +38,7 @@ var mp4Cmd = &cobra.Command{
 		for _, file := range fileArray {
 			success := ConvertMp4FileToMov(file, replaceMethod)
 			if !success {
-				message := "\tError while trying to convert " + file.parentPath + file.Name + "." + file.Type
+				message := "\tError while trying to convert " + file.parentPath + "/" + file.Name + "." + file.Type
 				log.Println(message)
 			}
 		}
